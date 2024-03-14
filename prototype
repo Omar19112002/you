@@ -1,0 +1,87 @@
+public class Product implements Cloneable {
+    private String name;
+    private String description;
+    private double price;
+
+    // Constructor
+    public Product(String name, String description, double price) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+    }
+
+    // Getters and setters
+    // Implement clone() method
+    @Override
+    public Product clone() throws CloneNotSupportedException {
+        return (Product) super.clone();
+    }
+
+    // Getters and setters
+    // (Assuming they are implemented here)
+}
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Product Form</title>
+</head>
+<body>
+    <h2>Product Form</h2>
+    <form action="ProductServlet" method="post">
+        Name: <input type="text" name="name"><br>
+        Description: <input type="text" name="description"><br>
+        Price: <input type="text" name="price"><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet("/ProductServlet")
+public class ProductServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Retrieve form parameters
+        String name = request.getParameter("name");
+        String description = request.getParameter("description");
+        double price = Double.parseDouble(request.getParameter("price"));
+
+        // Create prototype product
+        Product prototypeProduct = new Product("Prototype", "Prototype description", 0.0);
+
+        try {
+            // Clone prototype and customize
+            Product newProduct = prototypeProduct.clone();
+            newProduct.setName(name);
+            newProduct.setDescription(description);
+            newProduct.setPrice(price);
+
+            // Do something with the new product (e.g., save to database, display)
+            // For demonstration, let's just print it
+            System.out.println("Created Product: " + newProduct.getName() + ", " + newProduct.getDescription() + ", $" + newProduct.getPrice());
+
+            // Redirect to a success page
+            response.sendRedirect("success.jsp");
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            // Handle exception
+        }
+    }
+}
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Success</title>
+</head>
+<body>
+    <h2>Product Created Successfully!</h2>
+</body>
+</html>
